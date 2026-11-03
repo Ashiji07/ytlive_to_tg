@@ -1,15 +1,15 @@
 FROM python:3.12-slim
 
-# ffmpeg = video merge/split, gcc = tgcrypto build karne ke liye
+# ffmpeg = video merge/split, gcc + libc6-dev = tgcrypto build karne ke liye
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends ffmpeg ca-certificates gcc \
+    && apt-get install -y --no-install-recommends ffmpeg ca-certificates gcc libc6-dev \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt \
-    && apt-get purge -y --auto-remove gcc
+    && apt-get purge -y --auto-remove gcc libc6-dev
 
 COPY yt_live_bot.py .
 
