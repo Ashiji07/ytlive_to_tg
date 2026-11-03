@@ -1,0 +1,11 @@
+services:
+  ytlivebot:
+    build: .
+    container_name: ytlivebot
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./data:/app/data
+      - ./downloads:/app/downloads
+      # cookies use karne ho to neeche wali line uncomment karo
+      # - ./cookies.txt:/app/cookies.txt:ro
