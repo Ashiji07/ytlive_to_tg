@@ -32,7 +32,9 @@ from pyrogram.types import Message
 API_ID = int(os.environ["API_ID"])
 API_HASH = os.environ["API_HASH"]
 BOT_TOKEN = os.environ["BOT_TOKEN"]
-OWNER_ID = int(os.environ["OWNER_ID"])
+# OWNER_ID me ek ya comma se kai Telegram user id ho sakte hain (jaise 111,222)
+OWNER_IDS = [int(x) for x in os.environ["OWNER_ID"].replace(" ", "").split(",") if x]
+OWNER_ID = OWNER_IDS[0]  # default upload chat / auto-watch ke status messages yahin jaate hain
 CHANNEL_ID = os.environ.get("CHANNEL_ID", "")
 UPLOAD_CHAT_ID = int(os.environ.get("UPLOAD_CHAT_ID", OWNER_ID))
 COOKIES_FILE = os.environ.get("COOKIES_FILE")
@@ -43,7 +45,7 @@ TG_LIMIT = 2 * 1024 * 1024 * 1024 - 50 * 1024 * 1024  # ~1.95 GB safe limit
 
 Path("data").mkdir(exist_ok=True)
 app = Client("ytlivebot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN, workdir="data")
-owner_only = filters.user(OWNER_ID)
+owner_only = filters.user(OWNER_IDS)
 
 active_videos: set[str] = set()
 watch_task: asyncio.Task | None = None
