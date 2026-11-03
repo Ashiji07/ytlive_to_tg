@@ -1,13 +1,15 @@
 FROM python:3.12-slim
 
+# ffmpeg = video merge/split, gcc = tgcrypto build karne ke liye
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends ffmpeg ca-certificates \
+    && apt-get install -y --no-install-recommends ffmpeg ca-certificates gcc \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt \
+    && apt-get purge -y --auto-remove gcc
 
 COPY yt_live_bot.py .
 
