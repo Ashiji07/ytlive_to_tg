@@ -21,6 +21,8 @@ Commands:
 import asyncio
 import os
 import shutil
+import threading
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 import yt_dlp
@@ -168,6 +170,32 @@ async def cmd_stop(_, m: Message):
     await m.reply("Watch band.")
 
 
+class HealthHandler(BaseHTTPRequestHandler):
+    """Render port check + UptimeRobot ping ke liye."""
+
+    def _ok(self):
+        self.send_response(200)
+        self.send_header("Content-Type", "text/plain")
+        self.end_headers()
+
+    def do_GET(self):
+        self._ok()
+        self.wfile.write(b"ok")
+
+    def do_HEAD(self):
+        self._ok()
+
+    def log_message(self, *args):
+        pass  # logs shaant rakho
+
+
+def start_health_server():
+    port = int(os.environ.get("PORT", "10000"))
+    server = ThreadingHTTPServer(("0.0.0.0", port), HealthHandler)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+
+
 if __name__ == "__main__":
     DOWNLOAD_DIR.mkdir(exist_ok=True)
+    start_health_server()
     app.run()
